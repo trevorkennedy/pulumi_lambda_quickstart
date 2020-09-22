@@ -3,6 +3,7 @@ import boto3
 import json
 
 
+# Scan DynamoDB table for all image labels
 def query_images():
     dynamodb = boto3.resource('dynamodb')
     table_name = os.environ['DYNAMODB_TABLE']
@@ -16,6 +17,7 @@ def query_images():
     return json.dumps(items)
 
 
+# return response as JSON
 def handler(event, context):
     return {
         "statusCode": 200,

@@ -16,6 +16,7 @@ lambda_role = iam.Role('lambdaRole',
     }"""
 )
 
+# Give lambda fuctions access to S3, DynamoDB and Rekognition
 lambda_role_policy = iam.RolePolicy('lambdaRolePolicy',
     role=lambda_role.id,
     policy="""{

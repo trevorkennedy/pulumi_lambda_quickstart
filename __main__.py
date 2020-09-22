@@ -18,8 +18,9 @@ db = dynamodb_table("my_table")
 LAMBDA_SCAN_SOURCE = 'lambda_scan.py'
 LAMBDA_SCAN_PACKAGE = 'lambda_scan.zip'
 LAMBDA_VERSION = '1.0.0'
-os.system('zip %s %s' % (LAMBDA_SCAN_PACKAGE, LAMBDA_SCAN_SOURCE))
 
+# Create zip file of lambda function code
+os.system('zip %s %s' % (LAMBDA_SCAN_PACKAGE, LAMBDA_SCAN_SOURCE))
 mime_type, _ = mimetypes.guess_type(LAMBDA_SCAN_PACKAGE)
 obj = s3.BucketObject(
             LAMBDA_VERSION+'/'+LAMBDA_SCAN_PACKAGE,
@@ -28,6 +29,7 @@ obj = s3.BucketObject(
             content_type=mime_type
             )
 
+# Create function from zip file
 scan_fn = lambda_.Function(
     'DynamoImagesScan',
     s3_bucket=web_bucket.id,
@@ -38,6 +40,7 @@ scan_fn = lambda_.Function(
     environment={"variables": {"DYNAMODB_TABLE": db.id}}
 )
 
+# Create endpoint using API Gateway
 scan_api = apigateway.RestApi(
     str(scan_fn.id),
     description='Pulumi Lambda API Gateway Example'
@@ -68,6 +71,7 @@ scan_dep = apigateway.Deployment(
     __opts__=ResourceOptions(depends_on=[scan_root_int])
 )
 
+# Set function permissions (access S3 and DynamoDB)
 scan_perm = lambda_.Permission(
     "apigw",
     statement_id="AllowAPIGatewayInvoke",
@@ -117,17 +121,20 @@ bucket_notification = s3.BucketNotification(
 )
 
 # Export the name of the bucket
-# List bucket with:
-# aws s3 ls $(pulumi stack output bucket_name)
 export('bucket_name', web_bucket.id)
+# List bucket using: aws s3 ls $(pulumi stack output bucket_name)
+
 # Export the website url
 export('website_url', web_bucket.website_endpoint)
+
 # Export the DynamoDB table name
 export('table_name',  db.id)
-# Export the name of the lambda
-# Test with:
-# aws lambda invoke --region=us-east-1 --function-name=`pulumi stack output lambda_name` output.txt
+
+# Export the names of the lambda functions
 export('lambda_scan',  scan_fn.id)
 export('lambda_rekognition',  lambda_rekognition.id)
+# Test with:
+# aws lambda invoke --region=us-east-1 --function-name=`pulumi stack output lambda_name` output.txt
+
 # Export the name of the API endpoint
 export('api_endpoint', scan_dep.invoke_url)

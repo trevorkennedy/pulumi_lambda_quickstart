@@ -8,6 +8,7 @@ from datetime import datetime
 import pathlib
 
 
+# Call Rekognition API with an image from the S3 bucket
 def get_image_labels(s3_bucket, photo):
     client = boto3.client('rekognition')
     response = client.detect_labels(
@@ -16,6 +17,7 @@ def get_image_labels(s3_bucket, photo):
     return response
 
 
+# Save image name, labels and timestamp to the DynamoDB table
 def put_image_details(photo, label, confidence):
     dynamodb = boto3.resource('dynamodb')
     dynamodb_table = os.environ['DYNAMODB_TABLE']
@@ -31,6 +33,7 @@ def put_image_details(photo, label, confidence):
     return response
 
 
+# Get the first label of an image and persist it to DynamoDB
 def process_image(bucket, image):
     ext = pathlib.Path(image).suffix
     if ext in ['.jpg', '.png']:
@@ -39,6 +42,7 @@ def process_image(bucket, image):
         dynamodb_response = put_image_details(image, first_label['Name'], first_label['Confidence'])
 
 
+# Process each new file added to the S3 bucket
 def lambda_handler(event, context):
     for record in event['Records']:
         bucket = record['s3']['bucket']['name']
