@@ -29,3 +29,6 @@ Use the following commands to teardown:
 aws s3 rm s3://$(pulumi stack output bucket_name)/fireplace.jpg
 pulumi destroy
 ```
+
+## Architecture
+![Architecture](https://raw.githubusercontent.com/trevorkennedy/pulumi_lambda_quickstart/master/Architecture.png)
