@@ -20,5 +20,12 @@ curl $(pulumi stack output website_url)
 aws s3 cp ~/Desktop/fireplace.jpg s3://$(pulumi stack output bucket_name)
 aws s3 ls $(pulumi stack output bucket_name)
 curl $(pulumi stack output api_endpoint)
+```
+
+## Cleanup
+Use the following commands to teardown:
+
+```
+aws s3 rm s3://$(pulumi stack output bucket_name)/fireplace.jpg
 pulumi destroy
 ```
