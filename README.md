@@ -15,6 +15,7 @@ This quickstart will deploy:
 Issue the following commands to run and test:
 
 ```
+pulumi config set aws:region us-west-2
 pulumi up
 curl $(pulumi stack output website_url)
 aws s3 cp ~/Desktop/fireplace.jpg s3://$(pulumi stack output bucket_name)
