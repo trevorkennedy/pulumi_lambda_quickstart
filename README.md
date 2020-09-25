@@ -1,5 +1,8 @@
 # Pulumi AWS Lambda Quickstart
 
+## Overview
+Pulumi is an open source infrastructre as code tool that allows developers to provision cloud resources using a progamming languages including (Python, JavaScript, Go and C#). It operates very similar to Terraform and CloudFormation only it is cloud agnostic and there are no YAML of JSON files to edit.
+
 This quickstart will deploy:
 - an S3 bucket configured to serve a static website
 - a DynamoDB table
